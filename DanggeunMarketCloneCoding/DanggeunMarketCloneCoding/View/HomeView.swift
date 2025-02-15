@@ -14,6 +14,12 @@ struct HomeView: View {
     @State private var scrollOffset: CGFloat = 0.0 // 현재 스크롤 위치 저장
     @State private var hasScrolled: Bool = false // 스크롤 여부 감지 변수
     
+    
+    // ✅ 화면 높이에 따른 동적 기준값 설정
+    private var scrollThreshold: CGFloat {
+        UIScreen.main.bounds.height * 0.05 // 전체 화면 높이의 5%
+    }
+    
     var body: some View {
         NavigationStack {
             
@@ -125,7 +131,8 @@ struct HomeView: View {
                     .background(GeometryReader { geo -> Color in
                         DispatchQueue.main.async {
                             self.scrollOffset = geo.frame(in: .global).minY
-                            if scrollOffset < 100 { // 초기 시작점에서만 에니메이션 미 작동하게
+                            
+                            if scrollOffset < scrollThreshold {
                                 hasScrolled = true
                             }
                         }
@@ -144,7 +151,7 @@ struct HomeView: View {
                             
                             Image(systemName: "plus")
                             
-                            if Int(scrollOffset) >= 100 {
+                            if Int(scrollOffset) >= Int(scrollThreshold) { // ✅ 동적 기준 적용
                                 Text("글쓰기")
                             }
                             
